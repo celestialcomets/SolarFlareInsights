@@ -11,11 +11,20 @@ s = {'duration.s': working_data['duration.s'], 'total.counts': working_data['tot
      working_data['x.pos.asec'], 'y.pos.asec': working_data['y.pos.asec'],'month': working_data['month'],'year': working_data['year']}
 df = pd.DataFrame(s)
 
-batch_1 = (df['month'] == 1 or df['month'] == 2 or df['month'] == 3 or df['month'] == 4) # and (df['year'] == 2004)
-df_1 = df[batch_1]
+# Batch 1
+batch = ((df['month'].isin([1, 2, 3, 4])) & (df['year'] == 2004))
+
+# Use the conditions to filter the DataFrame
+df_1 = df[batch]
 
 print(df_1)
 
+# Batch 2
+batch = ((df['month'].isin([3, 4, 5, 6])) & (df['year'] == 2004))
 
+# Use the conditions to filter the DataFrame
+df_2 = df[batch]
+
+print(df_2)
 
 
