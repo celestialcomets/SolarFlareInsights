@@ -103,7 +103,7 @@ df_11 = df[batch]
 
 def extract_coordinates(input_df):
     # Select the columns you need
-    selected_columns = ['x.pos.asec', 'y.pos.asec']
+    selected_columns = ['x.pos.asec', 'y.pos.asec', 'total.counts']
 
     # Create a new DataFrame with just the x and y coordinates
     new_df = input_df[selected_columns]
@@ -114,18 +114,51 @@ def extract_coordinates(input_df):
 # Call the function with your DataFrame
 coordinates_df = extract_coordinates(df_1)
 
-def calculate_radius(batch):
+def calculate_radius(batch, found):
      #random_number = random.randint(0, batch.length())
      rand_num = batch.sample()
+     # print(rand_num.index.values[0])
+
+     test = False
+     while test == False:
+          if rand_num.index.values[0] not in found:
+               found.append(rand_num.index.values[0])
+               test = True
+               print('Its true',rand_num.index.values[0])
+               break
+          else:
+               rand_num = batch.sample()
+               print('It was false')
+                
 
     # Perform any calculations or operations you need for radius calculation
      #radius = (rand_num[0]**2 + rand_num[1]**2)**0.5
-     # radius = 
+     rad = 50
+
+     x_upper = rand_num['x.pos.asec'].values [0] + rad
+     x_lower = rand_num['x.pos.asec'].values [0] - rad
+     y_upper = rand_num['y.pos.asec'].values [0] + rad
+     y_lower = rand_num['y.pos.asec'].values [0] - rad
      
-     return rand_num['x.pos.asec'].values [0], rand_num['y.pos.asec'].values [0]
+     #radius_x = 0
+     #radius_y = 0
 
+     
+     counts = 0
 
+     for num in batch.index:
+          
+          if (num not in found) and (x_lower <= batch['x.pos.asec'][num] <= x_upper) and (y_lower <= batch['y.pos.asec'][num] <= y_upper):
+               found.append(num)
+               counts += batch['total.counts'][num]
+
+     return counts, found
+
+xy_found = []
 
 # Print the new DataFrame
 #print(coordinates_df)
-print(calculate_radius(coordinates_df))
+test_count, test_list = calculate_radius(coordinates_df, xy_found)
+
+print(test_count)
+print(test_list)
