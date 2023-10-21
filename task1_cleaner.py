@@ -1,6 +1,8 @@
 import pandas as pd
 import random
 
+from sklearn.preprocessing import StandardScaler
+
 task1 = pd.read_csv('Solar_flare_RHESSI_2004_05.csv')
 
 attributes = ['duration.s', 'total.counts', 'energy.kev', 'x.pos.asec', 'y.pos.asec', 'month', 'year']
@@ -44,10 +46,25 @@ def fetch_intensity_recursive(df):
     new_row, remaining_df = fetch_intensity(x_value, y_value, 50, df)
     intensity_df = pd.DataFrame([new_row])
 
-    return intensity_df.append(fetch_intensity_recursive(remaining_df), ignore_index=True)
+    return intensity_df._append(fetch_intensity_recursive(remaining_df), ignore_index=True)
 
 
 final_intensity_list_batch_1 = fetch_intensity_recursive(df_1)
 
 print(final_intensity_list_batch_1)
 
+
+attributes = ['duration.s', 'total.counts', 'energy.kev.i', 'energy.kev.f', 'x.pos.asec', 'y.pos.asec', 'month', 'year']
+working_data = task1[attributes]
+
+# Batch 1
+batch = ((working_data['month'].isin([1, 2, 3, 4])) & (working_data['year'] == 2004))
+
+# Use the conditions to filter the DataFrame
+df_1 = working_data[batch]
+
+df_1['energy.kev.mid'] = (df_1['energy.kev.i'] + df_1['energy.kev.f']) / 2
+
+scaler = StandardScaler()
+df_1[['energy.kev.mid', 'duration.s']] = scaler.fit_transform(df_1[['energy.kev.mid', 'duration.s']])
+print(df_1[['energy.kev.mid', 'duration.s']])
