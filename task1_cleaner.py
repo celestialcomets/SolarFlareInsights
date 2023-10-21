@@ -5,7 +5,7 @@ from sklearn.preprocessing import StandardScaler
 
 task1 = pd.read_csv('Solar_flare_RHESSI_2004_05.csv')
 
-attributes = ['duration.s', 'total.counts', 'energy.kev', 'x.pos.asec', 'y.pos.asec', 'month', 'year']
+attributes = ['duration.s', 'total.counts', 'energy.kev.i', 'energy.kev.f', 'x.pos.asec', 'y.pos.asec', 'month', 'year']
 working_data = task1[attributes]
 
 # Batch 1
@@ -41,7 +41,7 @@ def fetch_intensity_recursive(df):
         return pd.DataFrame(columns=['x.pos.asec', 'y.pos.asec', 'total.counts'])
 
     random_idx = random.randrange(len(df))
-    x_value, y_value = df.iloc[random_idx, 3], df.iloc[random_idx, 4]
+    x_value, y_value = df.iloc[random_idx, 4], df.iloc[random_idx, 5]
 
     new_row, remaining_df = fetch_intensity(x_value, y_value, 50, df)
     intensity_df = pd.DataFrame([new_row])
