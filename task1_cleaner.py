@@ -68,3 +68,38 @@ df_1['energy.kev.mid'] = (df_1['energy.kev.i'] + df_1['energy.kev.f']) / 2
 scaler = StandardScaler()
 df_1[['energy.kev.mid', 'duration.s']] = scaler.fit_transform(df_1[['energy.kev.mid', 'duration.s']])
 print(df_1[['energy.kev.mid', 'duration.s']])
+
+def fetch_intensity_2(x_value, y_value, radius, df):
+    x_upper = x_value + radius
+    x_lower = x_value - radius
+    y_upper = y_value + radius
+    y_lower = y_value - radius
+
+    condition = ((x_lower <= df['x.pos.asec']) & (df['x.pos.asec'] <= x_upper)) & \
+                ((y_lower <= df['y.pos.asec']) & (df['y.pos.asec'] <= y_upper))
+
+    filtered_data = df[condition]
+    intensity = (filtered_data['duration.s'] * filtered_data['energy.kev.mid']).sum()
+
+    new_row_data = {
+        'x.pos.asec': x_value,
+        'y.pos.asec': y_value,
+        'intensity': intensity
+    }
+
+    return new_row_data, df[~condition]
+
+def fetch_intensity_recursive_2(df):
+    intensity_list = []
+
+    while not df.empty:
+        random_idx = random.randrange(len(df))
+        x_value, y_value = df.iloc[random_idx, 4], df.iloc[random_idx, 5]
+        new_row, df = fetch_intensity_2(x_value, y_value, 50, df)
+        intensity_list.append(new_row)
+
+    return pd.DataFrame(intensity_list)
+
+final_intensity_list_batch_1 = fetch_intensity_recursive_2(df_1)
+
+print(final_intensity_list_batch_1)
