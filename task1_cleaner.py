@@ -8,10 +8,48 @@ working_data = task1[attributes]
 
 # Batch 1
 batch = ((working_data['month'].isin([1, 2, 3, 4])) & (working_data['year'] == 2004))
-
 # Use the conditions to filter the DataFrame
 df_1 = working_data[batch]
 
+# Batch 2
+batch = ((working_data['month'].isin([3, 4, 5, 6])) & (working_data['year'] == 2004))
+df_2 = working_data[batch]
+
+# Batch 3
+batch = ((working_data['month'].isin([5, 6, 7, 8])) & (working_data['year'] == 2004))
+df_3 = working_data[batch]
+
+# Batch 4
+batch = ((working_data['month'].isin([7, 8, 9, 10])) & (working_data['year'] == 2004))
+df_4 = working_data[batch]
+
+# Batch 5
+batch = ((working_data['month'].isin([9, 10, 11, 12])) & (working_data['year'] == 2004))
+df_5 = working_data[batch]
+
+# Batch 6
+batch = ((working_data['month'].isin([11, 12])) & (working_data['year'] == 2004)) | ((working_data['month'].isin([1, 2])) & (working_data['year'] == 2005))
+df_6 = working_data[batch]
+
+# Batch 7
+batch = ((working_data['month'].isin([1, 2, 3, 4])) & (working_data['year'] == 2005))
+df_7 = working_data[batch]
+
+# Batch 8
+batch = ((working_data['month'].isin([3, 4, 5, 6])) & (working_data['year'] == 2005))
+df_8 = working_data[batch]
+
+# Batch 9
+batch = ((working_data['month'].isin([5, 6, 7, 8])) & (working_data['year'] == 2005))
+df_9 = working_data[batch]
+
+# Batch 10
+batch = ((working_data['month'].isin([7, 8, 9, 10])) & (working_data['year'] == 2005))
+df_10 = working_data[batch]
+
+# Batch 11
+batch = ((working_data['month'].isin([9, 10, 11, 12])) & (working_data['year'] == 2005))
+df_11 = working_data[batch]
 
 def fetch_intensity(x_value, y_value, radius, df):
     x_upper = x_value + radius
@@ -44,10 +82,7 @@ def fetch_intensity_recursive(df):
     new_row, remaining_df = fetch_intensity(x_value, y_value, 50, df)
     intensity_df = pd.DataFrame([new_row])
 
-    return intensity_df.append(fetch_intensity_recursive(remaining_df), ignore_index=True)
-
+    return intensity_df._append(fetch_intensity_recursive(remaining_df), ignore_index=True)
 
 final_intensity_list_batch_1 = fetch_intensity_recursive(df_1)
-
 print(final_intensity_list_batch_1)
-
