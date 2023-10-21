@@ -1,6 +1,8 @@
 import pandas as pd
 import random
 
+from sklearn.preprocessing import StandardScaler
+
 task1 = pd.read_csv('Solar_flare_RHESSI_2004_05.csv')
 
 attributes = ['duration.s', 'total.counts', 'energy.kev', 'x.pos.asec', 'y.pos.asec', 'month', 'year']
