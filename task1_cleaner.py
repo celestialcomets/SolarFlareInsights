@@ -46,7 +46,7 @@ def fetch_intensity_recursive(df):
     new_row, remaining_df = fetch_intensity(x_value, y_value, 50, df)
     intensity_df = pd.DataFrame([new_row])
 
-    return intensity_df._append(fetch_intensity_recursive(remaining_df), ignore_index=True)
+    return intensity_df.append(fetch_intensity_recursive(remaining_df), ignore_index=True)
 
 # _________BATCH 1 METHOD 1_________
 final_intensity_list_batch_1_method_1 = fetch_intensity_recursive(df_1)
@@ -176,3 +176,49 @@ def displayIntensityMethod2(intensity_data_frame):
     plt.show()
 
 displayIntensityMethod2(final_intensity_list_batch_1_method_2)
+
+x = final_intensity_list_batch_1_method_1['x.pos.asec'].values
+y = final_intensity_list_batch_1_method_1['y.pos.asec'].values
+total_counts = final_intensity_list_batch_1_method_1['total.counts'].values
+low_threshold = 25000000
+high_threshold = 50000000
+xbins = 60
+ybins = 60
+
+# Create a custom colormap with red for high values and blue for low values
+colors = np.where(total_counts > high_threshold, 'red', 'blue')
+
+# Add a circle
+x_center = 0
+y_center = 0
+radius = 1000
+
+# Create a figure for the scatter plot and circle
+fig, ax = plt.subplots()
+ax.scatter(x, y, c=colors, marker='o', cmap='bwr')
+circle = plt.Circle((x_center, y_center), radius, color='white', fill=False)
+ax.add_artist(circle)
+
+# Create a 2D histogram using np.histogram2d
+hist, xedges, yedges = np.histogram2d(x, y, bins=(xbins, ybins))
+
+# Create a mask to fill the area outside the circle
+x_mesh, y_mesh = np.meshgrid(xedges, yedges)
+distance_from_center = np.sqrt((x_mesh - x_center)**2 + (y_mesh - y_center)**2)
+mask = distance_from_center > radius
+
+# Ensure the mask dimensions match the histogram dimensions
+mask = mask[:-1, :-1]  # Adjust the mask shape to match the histogram bins
+
+# Mask the area outside the circle in the histogram
+masked_hist = np.ma.masked_where(mask, hist)
+
+# Plot the masked histogram
+plt.figure()
+plt.imshow(masked_hist, origin='lower', extent=[xedges[0], xedges[-1], yedges[0], yedges[-1]], cmap='plasma')
+plt.colorbar()
+plt.xlabel('X values')
+plt.ylabel('Y values')
+plt.title('2D Histogram for Hotspot Discovery')
+
+plt.show()
