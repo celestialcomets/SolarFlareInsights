@@ -285,6 +285,96 @@ min_y = min(data[:,0])
 range_values = [[min_x, max_x],[min_y, max_y]]
 grid_size = 35
 hist, *edges = np.histogram2d(data[:,1], data[:,0], bins = grid_size, range=range_values)
+
 plt.matshow(hist, extent=np.ravel([min_x, max_x, min_y, max_y]))
-plt.colorbar()
 plt.show()
+
+
+
+
+# Attempt to put bins and Threshold
+# Generate some random data for demonstration (replace with your data)
+data = final_intensity_list_batch_1_method_1.to_numpy()
+
+max_x = max(data[:, 1])
+min_x = min(data[:, 1])
+max_y = max(data[:, 0])
+min_y = min(data[:, 0])
+
+range_values = [[min_x, max_x], [min_y, max_y]]
+grid_size = 35#40
+
+hist, xedges, yedges = np.histogram2d(data[:, 1], data[:, 0], bins=grid_size, range=range_values)
+
+# Create a matrix to represent colors based on the count
+colors = np.empty_like(hist, dtype=str)
+
+#colors.fill('blue')  # Initialize all as blue
+colors.fill('rgba(255, 255, 255, 0)')
+
+
+colors[hist > 5] = 'yellow'  # Set counts > 3 to red
+#colors[(hist > 1) & (hist <= 3)] = 'yellow'  # Set counts > 1 and <= 3 to blue
+
+# Plot the density plot with colors
+plt.imshow(hist, origin='lower', extent=[xedges[0], xedges[-1], yedges[0], yedges[-1]], cmap='plasma')
+
+# Overlay the colors based on the matrix
+for i in range(grid_size):
+    for j in range(grid_size):
+        plt.fill_between([xedges[i], xedges[i + 1]], yedges[j], yedges[j + 1], color=colors[j, i], alpha=0.3)
+
+# Add a colorbar for better visualization
+cbar = plt.colorbar()
+cbar.set_label("Counts")
+
+# Add labels and title
+plt.xlabel('X values')
+plt.ylabel('Y values')
+plt.title('Density Plot with Color-Coded Bins')
+plt.show()
+
+
+
+
+
+# Changing color
+data = final_intensity_list_batch_1_method_1.to_numpy()
+
+max_x = max(data[:, 1])
+min_x = min(data[:, 1])
+max_y = max(data[:, 0])
+min_y = min(data[:, 0])
+
+range_values = [[min_x, max_x], [min_y, max_y]]
+grid_size = 35
+
+hist, xedges, yedges = np.histogram2d(data[:, 1], data[:, 0], bins=grid_size, range=range_values)
+
+# Create a matrix to represent colors based on the count
+colors = np.empty_like(hist, dtype=str)
+colors.fill('white')  # Initialize all as white
+
+# Set counts greater than 1 to yellow
+colors[hist > 1] = 'yellow'
+
+# Plot the density plot with colors
+plt.imshow(hist, origin='lower', extent=[xedges[0], xedges[-1], yedges[0], yedges[-1]], cmap='plasma')
+
+# Overlay the colors based on the matrix
+for i in range(grid_size):
+    for j in range(grid_size):
+        plt.fill_between([xedges[i], xedges[i + 1]], yedges[j], yedges[j + 1], color=colors[j, i], alpha=0.3)
+
+# Add a colorbar for better visualization
+cbar = plt.colorbar()
+cbar.set_label("Counts")
+
+# Add labels and title
+plt.xlabel('X values')
+plt.ylabel('Y values')
+plt.title('Density Plot with Color-Coded Bins')
+
+plt.show()
+
+
