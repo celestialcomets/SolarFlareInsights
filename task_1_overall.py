@@ -276,3 +276,15 @@ displayIntensityMethod2(final_intensity_list_batch_1_method_2, 1)
 # intensity maps for months 21+22+23+24 using Method 1 and Method 2
 displayIntensityMethod1(final_intensity_list_batch_11_method_1, 11)
 displayIntensityMethod2(final_intensity_list_batch_11_method_2, 11)
+
+data = final_intensity_list_batch_1_method_1.to_numpy()
+max_x = max(data[:,1])
+min_x = min(data[:,1])
+max_y = max(data[:,0])
+min_y = min(data[:,0])
+range_values = [[min_x, max_x],[min_y, max_y]]
+grid_size = 35
+hist, *edges = np.histogram2d(data[:,1], data[:,0], bins = grid_size, range=range_values)
+plt.matshow(hist, extent=np.ravel([min_x, max_x, min_y, max_y]))
+plt.colorbar()
+plt.show()
