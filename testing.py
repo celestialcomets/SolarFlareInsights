@@ -338,3 +338,42 @@ axes[1].set_title("Medium High Intensity Hotspots")
 
 plt.tight_layout()
 plt.show()
+
+def plot_intensity(data, grid_size=25, d1=1, d2=0.5):
+    # Define the range values for the bins
+    max_x = max(data[:, 1])
+    min_x = min(data[:, 1])
+    max_y = max(data[:, 0])
+    min_y = min(data[:, 0])
+    range_values = [[min_x, max_x], [min_y, max_y]]
+
+    # Calculate the histogram
+    hist, xedges, yedges = np.histogram2d(data[:, 1], data[:, 0], bins=grid_size, range=range_values)
+
+    # Create masks based on the adjusted thresholds
+    high_intensity_mask = np.where(hist > d1, 1, 0)
+    medium_high_intensity_mask = np.where((hist > d2) & (hist <= d1), 0.5, 0)
+
+    # Plot high-intensity and medium-high intensity spots side by side
+    fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+
+    # Plot high-intensity spots
+    cmap = ListedColormap(['white', 'red'])
+    im1 = axes[0].matshow(high_intensity_mask, extent=np.ravel([min_x, max_x, min_y, max_y]), cmap=cmap)
+    legend_elements1 = [Patch(facecolor='red', edgecolor='black', label='Intensity > 1')]
+    axes[0].legend(handles=legend_elements1, loc='upper right')
+    axes[0].set_title("High Intensity Hotspots")
+
+    # Plot medium-high intensity spots
+    cmap = ListedColormap(['white', 'orange'])
+    im2 = axes[1].matshow(medium_high_intensity_mask, extent=np.ravel([min_x, max_x, min_y, max_y]), cmap=cmap)
+    legend_elements2 = [Patch(facecolor='orange', edgecolor='black', label='0.5 < Intensity < 1')]
+    axes[1].legend(handles=legend_elements2, loc='upper right')
+    axes[1].set_title("Medium High Intensity Hotspots")
+
+    plt.tight_layout()
+    plt.show()
+
+data = final_intensity_list_batch_1_method_1.to_numpy()
+
+plot_intensity(data)
