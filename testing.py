@@ -159,8 +159,8 @@ def plot_intensity(final_intensity_data, batch, grid_size=25):
 
     # Calculate threshold
     cou = []
-    for x in range (0, 25):
-        for y in range (0, 25):
+    for x in range (0, grid_size):
+        for y in range (0, grid_size):
             c = hist[x][y]
             cou.append(c)
     maximum = (max(cou))
