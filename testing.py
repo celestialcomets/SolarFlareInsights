@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import Normalize
 from sklearn.preprocessing import StandardScaler
 import random
+from matplotlib.colors import ListedColormap
+from matplotlib.patches import Patch
 
 # _________METHOD 1_________
 def fetch_intensity(x_value, y_value, radius, df):
@@ -36,7 +38,7 @@ def fetch_intensity_recursive(df):
     new_row, remaining_df = fetch_intensity(x_value, y_value, 50, df)
     intensity_df = pd.DataFrame([new_row])
 
-    return intensity_df._append(fetch_intensity_recursive(remaining_df), ignore_index=True)
+    return intensity_df.append(fetch_intensity_recursive(remaining_df), ignore_index=True)
 
 #_________Displaying Instensity List for Method 1_________
 # Takes a final_intensity_list_batch# to display the data
@@ -314,21 +316,25 @@ d1 = 1  # Lower threshold for high intensity
 d2 = 0.5  # Lower threshold for medium-high intensity
 
 # Create masks based on the adjusted thresholds
-high_intensity_mask = np.where(hist > d1, hist, 0)
-medium_high_intensity_mask = np.where((hist > d2) & (hist <= d1), hist, 0)
+high_intensity_mask = np.where(hist > d1, 1, 0)
+medium_high_intensity_mask = np.where((hist > d2) & (hist <= d1), 0.5, 0)  # Using 0.5 as a representative value for medium-high intensity
 
 # Plot high-intensity and medium-high intensity spots side by side
 fig, axes = plt.subplots(1, 2, figsize=(12, 5))
 
 # Plot high-intensity spots
-im1 = axes[0].matshow(high_intensity_mask, extent=np.ravel([min_x, max_x, min_y, max_y]), cmap='viridis')
+cmap = ListedColormap(['white', 'red'])
+im1 = axes[0].matshow(high_intensity_mask, extent=np.ravel([min_x, max_x, min_y, max_y]), cmap=cmap)
+legend_elements1 = [Patch(facecolor='red', edgecolor='black', label='Intensity > 1')]
+axes[0].legend(handles=legend_elements1, loc='upper right')
 axes[0].set_title("High Intensity Hotspots")
-fig.colorbar(im1, ax=axes[0], label='Intensity')
 
 # Plot medium-high intensity spots
-im2 = axes[1].matshow(medium_high_intensity_mask, extent=np.ravel([min_x, max_x, min_y, max_y]), cmap='viridis')
+cmap = ListedColormap(['white', 'orange'])
+im2 = axes[1].matshow(medium_high_intensity_mask, extent=np.ravel([min_x, max_x, min_y, max_y]), cmap=cmap)
+legend_elements2 = [Patch(facecolor='orange', edgecolor='black', label='0.5 < Intensity < 1')]
+axes[1].legend(handles=legend_elements2, loc='upper right')
 axes[1].set_title("Medium High Intensity Hotspots")
-fig.colorbar(im2, ax=axes[1], label='Intensity')
 
 plt.tight_layout()
 plt.show()
