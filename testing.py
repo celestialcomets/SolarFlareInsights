@@ -292,3 +292,43 @@ hist = np.where(hist < 1.5, 0, hist)
 plt.matshow(hist, extent=np.ravel([min_x, max_x, min_y, max_y]))
 plt.colorbar()
 plt.show()
+
+
+
+
+data = final_intensity_list_batch_1_method_1.to_numpy()
+
+# Define the range values for the bins
+max_x = max(data[:, 1])
+min_x = min(data[:, 1])
+max_y = max(data[:, 0])
+min_y = min(data[:, 0])
+range_values = [[min_x, max_x], [min_y, max_y]]
+grid_size = 25
+
+# Calculate the histogram
+hist, xedges, yedges = np.histogram2d(data[:, 1], data[:, 0], bins=grid_size, range=range_values)
+
+# Define lower thresholds for the high and medium-high intensity spots
+d1 = 1  # Lower threshold for high intensity
+d2 = 0.5  # Lower threshold for medium-high intensity
+
+# Create masks based on the adjusted thresholds
+high_intensity_mask = np.where(hist > d1, hist, 0)
+medium_high_intensity_mask = np.where((hist > d2) & (hist <= d1), hist, 0)
+
+# Plot high-intensity and medium-high intensity spots side by side
+fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+
+# Plot high-intensity spots
+im1 = axes[0].matshow(high_intensity_mask, extent=np.ravel([min_x, max_x, min_y, max_y]), cmap='viridis')
+axes[0].set_title("High Intensity Hotspots")
+fig.colorbar(im1, ax=axes[0], label='Intensity')
+
+# Plot medium-high intensity spots
+im2 = axes[1].matshow(medium_high_intensity_mask, extent=np.ravel([min_x, max_x, min_y, max_y]), cmap='viridis')
+axes[1].set_title("Medium High Intensity Hotspots")
+fig.colorbar(im2, ax=axes[1], label='Intensity')
+
+plt.tight_layout()
+plt.show()
