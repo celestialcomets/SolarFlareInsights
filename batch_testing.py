@@ -137,14 +137,14 @@ for i in range(1, 12, 1):
     globals()[batch_variable_name] = fetch_intensity_recursive(current_df)
     
     # Print the result
-    print(globals()[batch_variable_name])
+    #print(globals()[batch_variable_name])
 
 
 # _________METHOD 2_________
 df_1['energy.kev.mid'] = (df_1['energy.kev.i'] + df_1['energy.kev.f']) / 2
 scaler = StandardScaler()
 df_1[['energy.kev.mid', 'duration.s']] = scaler.fit_transform(df_1[['energy.kev.mid', 'duration.s']])
-print(df_1[['energy.kev.mid', 'duration.s']])
+#print(df_1[['energy.kev.mid', 'duration.s']])
 
 def fetch_intensity_2(x_value, y_value, radius, df):
     x_upper = x_value + radius
@@ -179,7 +179,7 @@ def fetch_intensity_recursive_2(df):
 
 # _________BATCH 1 METHOD 2_________
 final_intensity_list_batch_1_method_2 = fetch_intensity_recursive_2(df_1)
-print(final_intensity_list_batch_1_method_2)
+#print(final_intensity_list_batch_1_method_2)
 
 
 #_________Displaying Instensity List for Method 1_________
