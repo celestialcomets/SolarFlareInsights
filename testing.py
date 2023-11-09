@@ -286,12 +286,12 @@ max_y = max(data[:,0])
 min_y = min(data[:,0])
 range_values = [[min_x, max_x],[min_y, max_y]]
 grid_size = 25
-hotspots, xbins, ybins = np.histogram2d(data[:,1], data[:,0], bins = grid_size, range=range_values)
-plt.matshow(hotspots, extent=np.ravel([min_x, max_x, min_y, max_y]))
+hist, xbins, ybins = np.histogram2d(data[:,1], data[:,0], bins = grid_size, range=range_values)
+plt.matshow(hist, extent=np.ravel([min_x, max_x, min_y, max_y]))
 plt.colorbar()
 
-hotspots = np.where(hotspots < 1.5, 0, hotspots)
-plt.matshow(hotspots, extent=np.ravel([min_x, max_x, min_y, max_y]))
+hist = np.where(hist < 1.5, 0, hist)
+plt.matshow(hist, extent=np.ravel([min_x, max_x, min_y, max_y]))
 plt.colorbar()
 plt.show()
 
