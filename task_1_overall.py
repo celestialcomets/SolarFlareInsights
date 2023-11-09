@@ -36,7 +36,7 @@ def fetch_intensity_recursive(df):
     new_row, remaining_df = fetch_intensity(x_value, y_value, 50, df)
     intensity_df = pd.DataFrame([new_row])
 
-    return intensity_df._append(fetch_intensity_recursive(remaining_df), ignore_index=True)
+    return intensity_df.append(fetch_intensity_recursive(remaining_df), ignore_index=True)
 
 #_________Displaying Instensity List for Method 1_________
 # Takes a final_intensity_list_batch# to display the data
@@ -72,6 +72,7 @@ def displayIntensityMethod1(intensity_data_frame, batch_num):
 
     title = f"Intensity Map Method 1 Batch {batch_num}"
     plt.title(title)
+    plt.savefig(f'Batch {batch_num} Method 1')
     plt.show()
 
 # _________METHOD 2_________
@@ -140,6 +141,7 @@ def displayIntensityMethod2(intensity_data_frame, batch_num):
 
     title = f"Intensity Map Method 2 Batch {batch_num}"
     plt.title(title)
+    plt.savefig(f'Batch {batch_num} Method 2')
     plt.show()
 
 # _________DATA LOADING + SEPARATION_________
