@@ -74,6 +74,7 @@ def displayIntensityMethod1(intensity_data_frame, batch_num):
 
     title = f"Intensity Map Method 1 Batch {batch_num}"
     plt.title(title)
+    plt.savefig(f"Intensity Map Method 1 Batch {batch_num} 15-16")
     plt.show()
 
 # _________METHOD 2_________
@@ -142,6 +143,7 @@ def displayIntensityMethod2(intensity_data_frame, batch_num):
 
     title = f"Intensity Map Method 2 Batch {batch_num}"
     plt.title(title)
+    plt.savefig(f"Intensity Map Method 2 Batch {batch_num} 15-16")
     plt.show()
 
 #_________Finding Hotspots and Displaying Them (With Thresholds)_________
@@ -182,7 +184,7 @@ def plot_intensity(final_intensity_data, batch, grid_size=25):
     plt.gca().set_aspect('equal', adjustable='box')
 
     plt.tight_layout()
-    plt.savefig(f'Intensity Plot Batch {batch}')
+    plt.savefig(f'Intensity Plot Batch {batch} 15-16')
     plt.show()
 
 #_________Finding Hotspots and Displaying Them (Without Thresholds)_________
@@ -205,89 +207,89 @@ def plot_intensity2(final_intensity_data, grid_size=25):
 
 
 # _________DATA LOADING + SEPARATION_________
-task1 = pd.read_csv('Solar_flare_RHESSI_2004_05.csv')
+task1 = pd.read_csv('Solar_flare_RHESSI_2015_16.csv')
 attributes_1 = ['duration.s', 'total.counts', 'energy.kev', 'x.pos.asec', 'y.pos.asec', 'month', 'year']
 attributes_2 = ['duration.s', 'total.counts', 'energy.kev.i', 'energy.kev.f', 'x.pos.asec', 'y.pos.asec', 'month', 'year']
 working_data_1 = task1[attributes_1]
 working_data_2 = task1[attributes_2]
 
 # Batch 1
-batch = ((working_data_1['month'].isin([1, 2, 3, 4])) & (working_data_1['year'] == 2004))
+batch = ((working_data_1['month'].isin([1, 2, 3, 4])) & (working_data_1['year'] == 2015))
 # Use the conditions to filter the DataFrame
 df_m1_b1 = working_data_1[batch]
 
-batch = ((working_data_2['month'].isin([1, 2, 3, 4])) & (working_data_2['year'] == 2004))
+batch = ((working_data_2['month'].isin([1, 2, 3, 4])) & (working_data_2['year'] == 2015))
 df_m2_b1 = working_data_2[batch]
 
 # Batch 2
-batch = ((working_data_1['month'].isin([3, 4, 5, 6])) & (working_data_1['year'] == 2004))
+batch = ((working_data_1['month'].isin([3, 4, 5, 6])) & (working_data_1['year'] == 2015))
 df_m1_b2 = working_data_1[batch]
 
-batch = ((working_data_2['month'].isin([3, 4, 5, 6])) & (working_data_2['year'] == 2004))
+batch = ((working_data_2['month'].isin([3, 4, 5, 6])) & (working_data_2['year'] == 2015))
 df_m2_b2 = working_data_2[batch]
 
 # Batch 3
-batch = ((working_data_1['month'].isin([5, 6, 7, 8])) & (working_data_1['year'] == 2004))
+batch = ((working_data_1['month'].isin([5, 6, 7, 8])) & (working_data_1['year'] == 2015))
 df_m1_b3 = working_data_1[batch]
 
-batch = ((working_data_2['month'].isin([5, 6, 7, 8])) & (working_data_2['year'] == 2004))
+batch = ((working_data_2['month'].isin([5, 6, 7, 8])) & (working_data_2['year'] == 2015))
 df_m2_b3 = working_data_2[batch]
 
 # Batch 4
-batch = ((working_data_1['month'].isin([7, 8, 9, 10])) & (working_data_1['year'] == 2004))
+batch = ((working_data_1['month'].isin([7, 8, 9, 10])) & (working_data_1['year'] == 2015))
 df_m1_b4 = working_data_1[batch]
 
-batch = ((working_data_2['month'].isin([7, 8, 9, 10])) & (working_data_2['year'] == 2004))
+batch = ((working_data_2['month'].isin([7, 8, 9, 10])) & (working_data_2['year'] == 2015))
 df_m2_b4 = working_data_2[batch]
 
 # Batch 5
-batch = ((working_data_1['month'].isin([9, 10, 11, 12])) & (working_data_1['year'] == 2004))
+batch = ((working_data_1['month'].isin([9, 10, 11, 12])) & (working_data_1['year'] == 2015))
 df_m1_b5 = working_data_1[batch]
 
-batch = ((working_data_2['month'].isin([9, 10, 11, 12])) & (working_data_2['year'] == 2004))
+batch = ((working_data_2['month'].isin([9, 10, 11, 12])) & (working_data_2['year'] == 2015))
 df_m2_b5 = working_data_2[batch]
 
 # Batch 6
-batch = ((working_data_1['month'].isin([11, 12])) & (working_data_1['year'] == 2004)) | ((working_data_1['month'].isin([1, 2])) & (working_data_1['year'] == 2005))
+batch = ((working_data_1['month'].isin([11, 12])) & (working_data_1['year'] == 2015)) | ((working_data_1['month'].isin([1, 2])) & (working_data_1['year'] == 2016))
 df_m1_b6 = working_data_1[batch]
 
-batch = ((working_data_2['month'].isin([11, 12])) & (working_data_2['year'] == 2004)) | ((working_data_2['month'].isin([1, 2])) & (working_data_2['year'] == 2005))
+batch = ((working_data_2['month'].isin([11, 12])) & (working_data_2['year'] == 2015)) | ((working_data_2['month'].isin([1, 2])) & (working_data_2['year'] == 2016))
 df_m2_b6 = working_data_2[batch]
 
 # Batch 7
-batch = ((working_data_1['month'].isin([1, 2, 3, 4])) & (working_data_1['year'] == 2005))
+batch = ((working_data_1['month'].isin([1, 2, 3, 4])) & (working_data_1['year'] == 2016))
 df_m1_b7 = working_data_1[batch]
 
-batch = ((working_data_2['month'].isin([1, 2, 3, 4])) & (working_data_2['year'] == 2005))
+batch = ((working_data_2['month'].isin([1, 2, 3, 4])) & (working_data_2['year'] == 2016))
 df_m2_b7 = working_data_2[batch]
 
 # Batch 8
-batch = ((working_data_1['month'].isin([3, 4, 5, 6])) & (working_data_1['year'] == 2005))
+batch = ((working_data_1['month'].isin([3, 4, 5, 6])) & (working_data_1['year'] == 2016))
 df_m1_b8 = working_data_1[batch]
 
-batch = ((working_data_2['month'].isin([3, 4, 5, 6])) & (working_data_2['year'] == 2005))
+batch = ((working_data_2['month'].isin([3, 4, 5, 6])) & (working_data_2['year'] == 2016))
 df_m2_b8 = working_data_2[batch]
 
 
 # Batch 9
-batch = ((working_data_1['month'].isin([5, 6, 7, 8])) & (working_data_1['year'] == 2005))
+batch = ((working_data_1['month'].isin([5, 6, 7, 8])) & (working_data_1['year'] == 2016))
 df_m1_b9 = working_data_1[batch]
 
-batch = ((working_data_2['month'].isin([5, 6, 7, 8])) & (working_data_2['year'] == 2005))
+batch = ((working_data_2['month'].isin([5, 6, 7, 8])) & (working_data_2['year'] == 2016))
 df_m2_b9 = working_data_2[batch]
 
 # Batch 10
-batch = ((working_data_1['month'].isin([7, 8, 9, 10])) & (working_data_1['year'] == 2005))
+batch = ((working_data_1['month'].isin([7, 8, 9, 10])) & (working_data_1['year'] == 2016))
 df_m1_b10 = working_data_1[batch]
 
-batch = ((working_data_2['month'].isin([7, 8, 9, 10])) & (working_data_2['year'] == 2005))
+batch = ((working_data_2['month'].isin([7, 8, 9, 10])) & (working_data_2['year'] == 2016))
 df_m2_b10 = working_data_2[batch]
 
 # Batch 11
-batch = ((working_data_1['month'].isin([9, 10, 11, 12])) & (working_data_1['year'] == 2005))
+batch = ((working_data_1['month'].isin([9, 10, 11, 12])) & (working_data_1['year'] == 2016))
 df_m1_b11 = working_data_1[batch]
 
-batch = ((working_data_2['month'].isin([9, 10, 11, 12])) & (working_data_2['year'] == 2005))
+batch = ((working_data_2['month'].isin([9, 10, 11, 12])) & (working_data_2['year'] == 2016))
 df_m2_b11 = working_data_2[batch]
 
 # _________BATCHES GO THROUGH METHOD 1_________
@@ -313,30 +315,30 @@ for i in range(1, 12, 1):
     # Define variable names
     batch_variable_name = f"final_intensity_list_batch_{i}_method_2"
     df_variable_name = f"df_m2_b{i}"
-    
+
     # Get the current dataframe using its variable name
     current_df = globals()[df_variable_name]
 
     current_df['energy.kev.mid'] = (current_df['energy.kev.i'] + current_df['energy.kev.f']) / 2
     scaler = StandardScaler()
     current_df[['energy.kev.mid', 'duration.s']] = scaler.fit_transform(current_df[['energy.kev.mid', 'duration.s']])
-    
+
     # Call fetch_intensity_recursive method and assign the result to the variable with dynamic name
     globals()[batch_variable_name] = fetch_intensity_recursive_2(current_df)
-    
+
     # Print the result
-    #print(globals()[batch_variable_name])
+    print(globals()[batch_variable_name])
 
 #print("final intensity list batch 5 method 2")
 #print(final_intensity_list_batch_5_method_2.head())
 
 # intensity maps for months 1+2+3+4 using Method 1 and Method 2
-# displayIntensityMethod1(final_intensity_list_batch_1_method_1, 1)
-# displayIntensityMethod2(final_intensity_list_batch_1_method_2, 1)
+displayIntensityMethod1(final_intensity_list_batch_1_method_1, 1)
+displayIntensityMethod2(final_intensity_list_batch_1_method_2, 1)
 #
 # # intensity maps for months 21+22+23+24 using Method 1 and Method 2
-# displayIntensityMethod1(final_intensity_list_batch_11_method_1, 11)
-# displayIntensityMethod2(final_intensity_list_batch_11_method_2, 11)
+displayIntensityMethod1(final_intensity_list_batch_11_method_1, 11)
+displayIntensityMethod2(final_intensity_list_batch_11_method_2, 11)
 
 # Calculating threshold
 overall = fetch_intensity_recursive(working_data_1)
