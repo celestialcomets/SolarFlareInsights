@@ -147,25 +147,22 @@ def displayIntensityMethod2(intensity_data_frame, batch_num):
 #_________Finding Hotspots and Displaying Them (With Thresholds)_________
 def plot_intensity(final_intensity_data, batch, grid_size=25):
     data = final_intensity_data.to_numpy()
-    #Define the range values for the bins
-    max_x = max(data[:, 1])
-    min_x = min(data[:, 1])
-    max_y = max(data[:, 0])
-    min_y = min(data[:, 0])
-    range_values = [[min_x, max_x], [min_y, max_y]]
+
+    # Set the desired range for x and y axes
+    range_values = [[-1000, 1000], [-1000, 1000]]
 
     # Calculate the histogram
     hist, xedges, yedges = np.histogram2d(data[:, 1], data[:, 0], bins=grid_size, range=range_values)
 
     # Calculate threshold
     cou = []
-    for x in range (0, grid_size):
-        for y in range (0, grid_size):
+    for x in range(0, grid_size):
+        for y in range(0, grid_size):
             c = hist[x][y]
             cou.append(c)
     maximum = (max(cou))
-    d1 = maximum *.70
-    d2 = maximum * .55
+    d1 = maximum * 0.70
+    d2 = maximum * 0.55
 
     # Create masks based on the adjusted thresholds
     high_intensity_mask = np.where(hist >= d1, 1, 0)
@@ -176,17 +173,20 @@ def plot_intensity(final_intensity_data, batch, grid_size=25):
 
     # Plot high-intensity spots
     cmap = ListedColormap(['white', 'red'])
-    im1 = axes[0].matshow(high_intensity_mask, extent=np.ravel([min_x, max_x, min_y, max_y]), cmap=cmap)
+    im1 = axes[0].matshow(high_intensity_mask, extent=np.ravel([-1000, 1000, -1000, 1000]), cmap=cmap, aspect='auto')
     legend_elements1 = [Patch(facecolor='red', edgecolor='black', label=f'Intensity > {d1:2.2f}')]
     axes[0].legend(handles=legend_elements1, loc='lower right')
     axes[0].set_title(f"High Intensity Hotspots Batch {batch}")
 
     # Plot medium-high intensity spots
     cmap = ListedColormap(['white', 'orange'])
-    im2 = axes[1].matshow(medium_high_intensity_mask, extent=np.ravel([min_x, max_x, min_y, max_y]), cmap=cmap)
+    im2 = axes[1].matshow(medium_high_intensity_mask, extent=np.ravel([-1000, 1000, -1000, 1000]), cmap=cmap, aspect='auto')
     legend_elements2 = [Patch(facecolor='orange', edgecolor='black', label=f'{d2:2.2f} < Intensity < {d1:2.2f}')]
     axes[1].legend(handles=legend_elements2, loc='lower right')
     axes[1].set_title(f"Medium High Intensity Hotspots Batch {batch}")
+
+    # Set aspect ratio to be equal for the entire figure
+    plt.gca().set_aspect('equal', adjustable='box')
 
     plt.tight_layout()
     plt.savefig(f'Intensity Plot Batch {batch}')
@@ -348,7 +348,7 @@ for i in range(1, 12, 1):
 
 k = 1
 
-while k < 12:
+while k <= 11:
     function_name = f"final_intensity_list_batch_{k}_method_1"
     plot_intensity(globals()[function_name], k, grid_size=25)
     k += 1
