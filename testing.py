@@ -189,6 +189,7 @@ def plot_intensity(final_intensity_data, batch, grid_size=25):
     axes[1].set_title(f"Medium High Intensity Hotspots Batch {batch}")
 
     plt.tight_layout()
+    plt.savefig(f'Intensity Plot Batch {batch}')
     plt.show()
 
 #_________Finding Hotspots and Displaying Them (Without Thresholds)_________
@@ -338,11 +339,16 @@ for i in range(1, 12, 1):
 #print(final_intensity_list_batch_5_method_2.head())
 
 # intensity maps for months 1+2+3+4 using Method 1 and Method 2
-displayIntensityMethod1(final_intensity_list_batch_1_method_1, 1)
-displayIntensityMethod2(final_intensity_list_batch_1_method_2, 1)
+# displayIntensityMethod1(final_intensity_list_batch_1_method_1, 1)
+# displayIntensityMethod2(final_intensity_list_batch_1_method_2, 1)
+#
+# # intensity maps for months 21+22+23+24 using Method 1 and Method 2
+# displayIntensityMethod1(final_intensity_list_batch_11_method_1, 11)
+# displayIntensityMethod2(final_intensity_list_batch_11_method_2, 11)
 
-# intensity maps for months 21+22+23+24 using Method 1 and Method 2
-displayIntensityMethod1(final_intensity_list_batch_11_method_1, 11)
-displayIntensityMethod2(final_intensity_list_batch_11_method_2, 11)
+k = 1
 
-plot_intensity(final_intensity_list_batch_1_method_1, 1, grid_size=25)
+while k < 12:
+    function_name = f"final_intensity_list_batch_{k}_method_1"
+    plot_intensity(globals()[function_name], k, grid_size=25)
+    k += 1
