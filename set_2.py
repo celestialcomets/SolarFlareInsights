@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import Normalize
 from sklearn.preprocessing import StandardScaler
 import random
+from matplotlib.colors import ListedColormap
+from matplotlib.patches import Patch
 
 # _________METHOD 1_________
 def fetch_intensity(x_value, y_value, radius, df):
@@ -36,7 +38,7 @@ def fetch_intensity_recursive(df):
     new_row, remaining_df = fetch_intensity(x_value, y_value, 50, df)
     intensity_df = pd.DataFrame([new_row])
 
-    return intensity_df.append(fetch_intensity_recursive(remaining_df), ignore_index=True)
+    return intensity_df._append(fetch_intensity_recursive(remaining_df), ignore_index=True)
 
 #_________Displaying Instensity List for Method 1_________
 # Takes a final_intensity_list_batch# to display the data
@@ -72,7 +74,7 @@ def displayIntensityMethod1(intensity_data_frame, batch_num):
 
     title = f"Intensity Map Method 1 Batch {batch_num}"
     plt.title(title)
-    plt.savefig(f'Batch {batch_num} Method 1')
+    plt.savefig(f"Intensity Map Method 1 Batch {batch_num} 15-16")
     plt.show()
 
 # _________METHOD 2_________
@@ -141,94 +143,153 @@ def displayIntensityMethod2(intensity_data_frame, batch_num):
 
     title = f"Intensity Map Method 2 Batch {batch_num}"
     plt.title(title)
-    plt.savefig(f'Batch {batch_num} Method 2')
+    plt.savefig(f"Intensity Map Method 2 Batch {batch_num} 15-16")
     plt.show()
 
+#_________Finding Hotspots and Displaying Them (With Thresholds)_________
+def plot_intensity(final_intensity_data, batch, grid_size=25):
+    data = final_intensity_data.to_numpy()
+
+    # Set the desired range for x and y axes
+    range_values = [[-1000, 1000], [-1000, 1000]]
+
+    # Calculate the histogram
+    hist, xedges, yedges = np.histogram2d(data[:, 1], data[:, 0], bins=grid_size, range=range_values)
+
+    d1 = globals()['d1']
+    d2 = globals()['d2']
+
+    # Create masks based on the adjusted thresholds
+    high_intensity_mask = np.where(hist >= d1, 1, 0)
+    medium_high_intensity_mask = np.where((hist >= d2) & (hist < d1), 0.5, 0)
+
+    # Plot high-intensity and medium-high intensity spots side by side
+    fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+
+    # Plot high-intensity spots
+    cmap = ListedColormap(['white', 'red'])
+    im1 = axes[0].matshow(high_intensity_mask, extent=np.ravel([-1000, 1000, -1000, 1000]), cmap=cmap, aspect='auto')
+    legend_elements1 = [Patch(facecolor='red', edgecolor='black', label=f'Intensity >= {d1:2.2f}')]
+    axes[0].legend(handles=legend_elements1, loc='lower right')
+    axes[0].set_title(f"High Intensity Hotspots Batch {batch}")
+
+    # Plot medium-high intensity spots
+    cmap = ListedColormap(['white', 'orange'])
+    im2 = axes[1].matshow(medium_high_intensity_mask, extent=np.ravel([-1000, 1000, -1000, 1000]), cmap=cmap, aspect='auto')
+    legend_elements2 = [Patch(facecolor='orange', edgecolor='black', label=f'{d2:2.2f} <= Intensity < {d1:2.2f}')]
+    axes[1].legend(handles=legend_elements2, loc='lower right')
+    axes[1].set_title(f"Medium High Intensity Hotspots Batch {batch}")
+
+    # Set aspect ratio to be equal for the entire figure
+    plt.gca().set_aspect('equal', adjustable='box')
+
+    plt.tight_layout()
+    plt.savefig(f'Intensity Plot Batch {batch} 15-16')
+    plt.show()
+
+#_________Finding Hotspots and Displaying Them (Without Thresholds)_________
+def plot_intensity2(final_intensity_data, grid_size=25):
+    data = final_intensity_data.to_numpy()
+    max_x = np.max(data[:, 1])
+    min_x = np.min(data[:, 1])
+    max_y = np.max(data[:, 0])
+    min_y = np.min(data[:, 0])
+    range_values = [[min_x, max_x], [min_y, max_y]]
+
+    hist, xbins, ybins = np.histogram2d(data[:, 1], data[:, 0], bins=grid_size, range=range_values)
+    plt.matshow(hist, extent=np.ravel([min_x, max_x, min_y, max_y]))
+    plt.colorbar()
+
+    hist = np.where(hist < 1.5, 0, hist)
+    plt.matshow(hist, extent=np.ravel([min_x, max_x, min_y, max_y]))
+    plt.colorbar()
+    plt.show()
+
+
 # _________DATA LOADING + SEPARATION_________
-task1 = pd.read_csv('Solar_flare_RHESSI_2004_05.csv')
+task1 = pd.read_csv('Solar_flare_RHESSI_2015_16.csv')
 attributes_1 = ['duration.s', 'total.counts', 'energy.kev', 'x.pos.asec', 'y.pos.asec', 'month', 'year']
 attributes_2 = ['duration.s', 'total.counts', 'energy.kev.i', 'energy.kev.f', 'x.pos.asec', 'y.pos.asec', 'month', 'year']
 working_data_1 = task1[attributes_1]
 working_data_2 = task1[attributes_2]
 
- 
 # Batch 1
-batch = ((working_data_1['month'].isin([1, 2, 3, 4])) & (working_data_1['year'] == 2004))
+batch = ((working_data_1['month'].isin([1, 2, 3, 4])) & (working_data_1['year'] == 2015))
 # Use the conditions to filter the DataFrame
 df_m1_b1 = working_data_1[batch]
 
-batch = ((working_data_2['month'].isin([1, 2, 3, 4])) & (working_data_2['year'] == 2004))
+batch = ((working_data_2['month'].isin([1, 2, 3, 4])) & (working_data_2['year'] == 2015))
 df_m2_b1 = working_data_2[batch]
 
 # Batch 2
-batch = ((working_data_1['month'].isin([3, 4, 5, 6])) & (working_data_1['year'] == 2004))
+batch = ((working_data_1['month'].isin([3, 4, 5, 6])) & (working_data_1['year'] == 2015))
 df_m1_b2 = working_data_1[batch]
 
-batch = ((working_data_2['month'].isin([3, 4, 5, 6])) & (working_data_2['year'] == 2004))
+batch = ((working_data_2['month'].isin([3, 4, 5, 6])) & (working_data_2['year'] == 2015))
 df_m2_b2 = working_data_2[batch]
 
 # Batch 3
-batch = ((working_data_1['month'].isin([5, 6, 7, 8])) & (working_data_1['year'] == 2004))
+batch = ((working_data_1['month'].isin([5, 6, 7, 8])) & (working_data_1['year'] == 2015))
 df_m1_b3 = working_data_1[batch]
 
-batch = ((working_data_2['month'].isin([5, 6, 7, 8])) & (working_data_2['year'] == 2004))
+batch = ((working_data_2['month'].isin([5, 6, 7, 8])) & (working_data_2['year'] == 2015))
 df_m2_b3 = working_data_2[batch]
 
 # Batch 4
-batch = ((working_data_1['month'].isin([7, 8, 9, 10])) & (working_data_1['year'] == 2004))
+batch = ((working_data_1['month'].isin([7, 8, 9, 10])) & (working_data_1['year'] == 2015))
 df_m1_b4 = working_data_1[batch]
 
-batch = ((working_data_2['month'].isin([7, 8, 9, 10])) & (working_data_2['year'] == 2004))
+batch = ((working_data_2['month'].isin([7, 8, 9, 10])) & (working_data_2['year'] == 2015))
 df_m2_b4 = working_data_2[batch]
 
 # Batch 5
-batch = ((working_data_1['month'].isin([9, 10, 11, 12])) & (working_data_1['year'] == 2004))
+batch = ((working_data_1['month'].isin([9, 10, 11, 12])) & (working_data_1['year'] == 2015))
 df_m1_b5 = working_data_1[batch]
 
-batch = ((working_data_2['month'].isin([9, 10, 11, 12])) & (working_data_2['year'] == 2004))
+batch = ((working_data_2['month'].isin([9, 10, 11, 12])) & (working_data_2['year'] == 2015))
 df_m2_b5 = working_data_2[batch]
 
 # Batch 6
-batch = ((working_data_1['month'].isin([11, 12])) & (working_data_1['year'] == 2004)) | ((working_data_1['month'].isin([1, 2])) & (working_data_1['year'] == 2005))
+batch = ((working_data_1['month'].isin([11, 12])) & (working_data_1['year'] == 2015)) | ((working_data_1['month'].isin([1, 2])) & (working_data_1['year'] == 2016))
 df_m1_b6 = working_data_1[batch]
 
-batch = ((working_data_2['month'].isin([11, 12])) & (working_data_2['year'] == 2004)) | ((working_data_2['month'].isin([1, 2])) & (working_data_2['year'] == 2005))
+batch = ((working_data_2['month'].isin([11, 12])) & (working_data_2['year'] == 2015)) | ((working_data_2['month'].isin([1, 2])) & (working_data_2['year'] == 2016))
 df_m2_b6 = working_data_2[batch]
 
 # Batch 7
-batch = ((working_data_1['month'].isin([1, 2, 3, 4])) & (working_data_1['year'] == 2005))
+batch = ((working_data_1['month'].isin([1, 2, 3, 4])) & (working_data_1['year'] == 2016))
 df_m1_b7 = working_data_1[batch]
 
-batch = ((working_data_2['month'].isin([1, 2, 3, 4])) & (working_data_2['year'] == 2005))
+batch = ((working_data_2['month'].isin([1, 2, 3, 4])) & (working_data_2['year'] == 2016))
 df_m2_b7 = working_data_2[batch]
 
 # Batch 8
-batch = ((working_data_1['month'].isin([3, 4, 5, 6])) & (working_data_1['year'] == 2005))
+batch = ((working_data_1['month'].isin([3, 4, 5, 6])) & (working_data_1['year'] == 2016))
 df_m1_b8 = working_data_1[batch]
 
-batch = ((working_data_2['month'].isin([3, 4, 5, 6])) & (working_data_2['year'] == 2005))
+batch = ((working_data_2['month'].isin([3, 4, 5, 6])) & (working_data_2['year'] == 2016))
 df_m2_b8 = working_data_2[batch]
 
 
 # Batch 9
-batch = ((working_data_1['month'].isin([5, 6, 7, 8])) & (working_data_1['year'] == 2005))
+batch = ((working_data_1['month'].isin([5, 6, 7, 8])) & (working_data_1['year'] == 2016))
 df_m1_b9 = working_data_1[batch]
 
-batch = ((working_data_2['month'].isin([5, 6, 7, 8])) & (working_data_2['year'] == 2005))
+batch = ((working_data_2['month'].isin([5, 6, 7, 8])) & (working_data_2['year'] == 2016))
 df_m2_b9 = working_data_2[batch]
 
 # Batch 10
-batch = ((working_data_1['month'].isin([7, 8, 9, 10])) & (working_data_1['year'] == 2005))
+batch = ((working_data_1['month'].isin([7, 8, 9, 10])) & (working_data_1['year'] == 2016))
 df_m1_b10 = working_data_1[batch]
 
-batch = ((working_data_2['month'].isin([7, 8, 9, 10])) & (working_data_2['year'] == 2005))
+batch = ((working_data_2['month'].isin([7, 8, 9, 10])) & (working_data_2['year'] == 2016))
 df_m2_b10 = working_data_2[batch]
 
 # Batch 11
-batch = ((working_data_1['month'].isin([9, 10, 11, 12])) & (working_data_1['year'] == 2005))
+batch = ((working_data_1['month'].isin([9, 10, 11, 12])) & (working_data_1['year'] == 2016))
 df_m1_b11 = working_data_1[batch]
 
-batch = ((working_data_2['month'].isin([9, 10, 11, 12])) & (working_data_2['year'] == 2005))
+batch = ((working_data_2['month'].isin([9, 10, 11, 12])) & (working_data_2['year'] == 2016))
 df_m2_b11 = working_data_2[batch]
 
 # _________BATCHES GO THROUGH METHOD 1_________
@@ -246,137 +307,61 @@ for i in range(1, 12, 1):
     # Print the result
     #print(globals()[batch_variable_name])
 
-#print("final intensity list batch 5 method 1")
-#print(final_intensity_list_batch_5_method_1.head())
-
 # _________BATCHES GO THROUGH METHOD 2_________
 for i in range(1, 12, 1):
     # Define variable names
     batch_variable_name = f"final_intensity_list_batch_{i}_method_2"
     df_variable_name = f"df_m2_b{i}"
-    
+
     # Get the current dataframe using its variable name
     current_df = globals()[df_variable_name]
 
     current_df['energy.kev.mid'] = (current_df['energy.kev.i'] + current_df['energy.kev.f']) / 2
     scaler = StandardScaler()
     current_df[['energy.kev.mid', 'duration.s']] = scaler.fit_transform(current_df[['energy.kev.mid', 'duration.s']])
-    
+
     # Call fetch_intensity_recursive method and assign the result to the variable with dynamic name
     globals()[batch_variable_name] = fetch_intensity_recursive_2(current_df)
-    
-    # Print the result
-    #print(globals()[batch_variable_name])
 
-#print("final intensity list batch 5 method 2")
-#print(final_intensity_list_batch_5_method_2.head())
+    # Print the result
+    print(globals()[batch_variable_name])
+
 
 # intensity maps for months 1+2+3+4 using Method 1 and Method 2
 displayIntensityMethod1(final_intensity_list_batch_1_method_1, 1)
 displayIntensityMethod2(final_intensity_list_batch_1_method_2, 1)
-
-# intensity maps for months 21+22+23+24 using Method 1 and Method 2
+#
+# # intensity maps for months 21+22+23+24 using Method 1 and Method 2
 displayIntensityMethod1(final_intensity_list_batch_11_method_1, 11)
 displayIntensityMethod2(final_intensity_list_batch_11_method_2, 11)
 
-data = final_intensity_list_batch_1_method_1.to_numpy()
-max_x = max(data[:,1])
-min_x = min(data[:,1])
-max_y = max(data[:,0])
-min_y = min(data[:,0])
-range_values = [[min_x, max_x],[min_y, max_y]]
-grid_size = 35
-hist, *edges = np.histogram2d(data[:,1], data[:,0], bins = grid_size, range=range_values)
-
-plt.matshow(hist, extent=np.ravel([min_x, max_x, min_y, max_y]))
-plt.show()
-
-
-
-
-# Attempt to put bins and Threshold
-# Generate some random data for demonstration (replace with your data)
-data = final_intensity_list_batch_1_method_1.to_numpy()
-
-max_x = max(data[:, 1])
-min_x = min(data[:, 1])
-max_y = max(data[:, 0])
-min_y = min(data[:, 0])
-
-range_values = [[min_x, max_x], [min_y, max_y]]
-grid_size = 35#40
-
+# Calculating threshold
+overall = fetch_intensity_recursive(working_data_1)
+data = overall.to_numpy()
+range_values = [[-1000, 1000], [-1000, 1000]]
+grid_size = 25
 hist, xedges, yedges = np.histogram2d(data[:, 1], data[:, 0], bins=grid_size, range=range_values)
+cou = []
+for x in range(0, grid_size):
+    for y in range(0, grid_size):
+        c = hist[x][y]
+        cou.append(c)
+cou = [i for i in cou if i != 0.0]
+cou.sort()
+percentile85 = round(len(cou) * .85)
+percentile99 = round(len(cou) * .99)
+d1, d2 = cou[percentile99], cou[percentile85]
 
-# Create a matrix to represent colors based on the count
-colors = np.empty_like(hist, dtype=str)
+k = 1
 
-#colors.fill('blue')  # Initialize all as blue
-colors.fill('rgba(255, 255, 255, 0)')
+#while k <= 11:
+#    function_name = f"final_intensity_list_batch_{k}_method_1"
+#    plot_intensity(globals()[function_name], k, grid_size=25)
+#    k += 1
 
-
-colors[hist > 5] = 'yellow'  # Set counts > 3 to red
-#colors[(hist > 1) & (hist <= 3)] = 'yellow'  # Set counts > 1 and <= 3 to blue
-
-# Plot the density plot with colors
-plt.imshow(hist, origin='lower', extent=[xedges[0], xedges[-1], yedges[0], yedges[-1]], cmap='plasma')
-
-# Overlay the colors based on the matrix
-for i in range(grid_size):
-    for j in range(grid_size):
-        plt.fill_between([xedges[i], xedges[i + 1]], yedges[j], yedges[j + 1], color=colors[j, i], alpha=0.3)
-
-# Add a colorbar for better visualization
-cbar = plt.colorbar()
-cbar.set_label("Counts")
-
-# Add labels and title
-plt.xlabel('X values')
-plt.ylabel('Y values')
-plt.title('Density Plot with Color-Coded Bins')
-plt.show()
-
-
-
-
-
-# Changing color
-data = final_intensity_list_batch_1_method_1.to_numpy()
-
-max_x = max(data[:, 1])
-min_x = min(data[:, 1])
-max_y = max(data[:, 0])
-min_y = min(data[:, 0])
-
-range_values = [[min_x, max_x], [min_y, max_y]]
-grid_size = 35
-
-hist, xedges, yedges = np.histogram2d(data[:, 1], data[:, 0], bins=grid_size, range=range_values)
-
-# Create a matrix to represent colors based on the count
-colors = np.empty_like(hist, dtype=str)
-colors.fill('white')  # Initialize all as white
-
-# Set counts greater than 1 to yellow
-colors[hist > 1] = 'yellow'
-
-# Plot the density plot with colors
-plt.imshow(hist, origin='lower', extent=[xedges[0], xedges[-1], yedges[0], yedges[-1]], cmap='plasma')
-
-# Overlay the colors based on the matrix
-for i in range(grid_size):
-    for j in range(grid_size):
-        plt.fill_between([xedges[i], xedges[i + 1]], yedges[j], yedges[j + 1], color=colors[j, i], alpha=0.3)
-
-# Add a colorbar for better visualization
-cbar = plt.colorbar()
-cbar.set_label("Counts")
-
-# Add labels and title
-plt.xlabel('X values')
-plt.ylabel('Y values')
-plt.title('Density Plot with Color-Coded Bins')
-
-plt.show()
-
-
+working_data_2['energy.kev.mid'] = (working_data_2['energy.kev.i'] + working_data_2['energy.kev.f']) / 2
+scaler = StandardScaler()
+working_data_2[['energy.kev.mid', 'duration.s']] = scaler.fit_transform(working_data_2[['energy.kev.mid', 'duration.s']])
+pd.set_option('display.max_columns', None)
+pd.set_option('float_format', '{:2f}'.format)
+print(working_data_2.describe())
